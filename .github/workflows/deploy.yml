@@ -23,9 +23,11 @@ jobs:
       - name: Deploy to EC2 via SSH
         run: |
           ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             cd ${{ secrets.PROJECT_DIR }}
-            git pull origin main
+            git pull origin master
             npm install
-            pm2 restart todo-app || pm2 start server.js --name todo-app
+            pm2 restart todo-web || pm2 start server.js --name todo-web
             pm2 save
           EOF
