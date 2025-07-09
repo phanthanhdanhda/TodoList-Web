@@ -38,6 +38,7 @@
   </div>
 
   <script>
+    const BASE_URL = 'http://54.179.99.140/:3000';
     let token = localStorage.getItem('token');
     let username = localStorage.getItem('username');
 
@@ -99,7 +100,7 @@
         clearStatus();
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
-        const res = await api('/api/auth/register', 'POST', { username, password });
+        const res = await api('${BASE_URL}/api/auth/register', 'POST', { username, password });
         showStatus('Registered successfully!');
         setToken(res.token, username);
       } catch (err) {
@@ -112,7 +113,7 @@
         clearStatus();
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
-        const res = await api('/api/auth/login', 'POST', { username, password });
+        const res = await api('${BASE_URL}/api/auth/login', 'POST', { username, password });
         showStatus('Login successful!');
         setToken(res.token, username);
       } catch (err) {
@@ -122,7 +123,7 @@
 
     async function fetchTodos() {
       try {
-        const todos = await api('/api/todos');
+        const todos = await api('${BASE_URL}/api/todos');
         const list = document.getElementById('todo-list');
         list.innerHTML = '';
         todos.forEach(todo => {
@@ -144,7 +145,7 @@
       try {
         const title = document.getElementById('new-task').value.trim();
         if (!title) return;
-        await api('/api/todos', 'POST', { title });
+        await api('${BASE_URL}/api/todos', 'POST', { title });
         document.getElementById('new-task').value = '';
         fetchTodos();
       } catch (err) {
@@ -154,7 +155,7 @@
 
     async function toggle(id) {
       try {
-        await api(`/api/todos/${id}`, 'PATCH');
+        await api(`${BASE_URL}/api/todos/${id}`, 'PATCH');
         fetchTodos();
       } catch (err) {
         showStatus(err.message, true);
@@ -163,7 +164,7 @@
 
     async function del(id) {
       try {
-        await api(`/api/todos/${id}`, 'DELETE');
+        await api(`${BASE_URL}/api/todos/${id}`, 'DELETE');
         fetchTodos();
       } catch (err) {
         showStatus(err.message, true);
@@ -172,7 +173,7 @@
 
     async function exportTasks() {
       try {
-        const res = await fetch('/api/todos/export', {
+        const res = await fetch('${BASE_URL}/api/todos/export', {
           headers: { 'Authorization': 'Bearer ' + token }
         });
         const blob = await res.blob();
@@ -193,7 +194,7 @@
         if (!file) return alert("Select file first!");
         const formData = new FormData();
         formData.append('file', file);
-        await api('/api/todos/import', 'POST', formData, true);
+        await api('${BASE_URL}/api/todos/import', 'POST', formData, true);
         fetchTodos();
       } catch (err) {
         showStatus('Import failed: ' + err.message, true);
